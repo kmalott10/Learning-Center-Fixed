@@ -1,0 +1,1442 @@
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Class</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+    color: #222;
+    overflow: hidden;
+}
+
+.screen {
+    display: none;
+    height: 100vh;
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 { font-size: clamp(25px, 4vw, 38px); margin: 8px 0; }
+h2 { margin: 8px 0; }
+p { margin: 7px; }
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #4285f4;
+    color: white;
+    margin: 6px;
+}
+
+button:hover { filter: brightness(0.9); }
+button:disabled { background: #bbb; cursor: not-allowed; }
+
+.home-button {
+    background: #666;
+    font-size: 16px;
+    padding: 9px 16px;
+}
+
+.message {
+    font-size: 23px;
+    font-weight: bold;
+    min-height: 32px;
+    margin: 8px;
+}
+
+input {
+    font-size: 22px;
+    padding: 10px;
+    margin: 8px;
+    width: 230px;
+    text-align: center;
+}
+
+/* LOGIN */
+
+#loginScreen { justify-content: center; }
+
+#loginBox {
+    border: 3px solid #4285f4;
+    border-radius: 20px;
+    padding: 30px;
+    width: min(90%, 420px);
+}
+
+/* HOME SCREEN */
+
+#homeScreen {
+    justify-content: flex-start;
+    padding: 10px 15px;
+}
+
+#homeScreen h1 { margin: 5px 0; }
+#homeScreen p { margin: 3px 0 8px; }
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: min(900px, 95%);
+}
+
+.game-button {
+    min-height: 65px;
+    margin: 0;
+    font-size: clamp(15px, 2vw, 21px);
+    padding: 8px;
+}
+
+.badge-heading {
+    margin: 10px 0 5px;
+    font-size: 20px;
+}
+
+.badge-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+    width: min(900px, 95%);
+}
+
+.badge {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 8px 3px;
+    background: #eee;
+    color: #999;
+    font-size: 13px;
+    font-weight: bold;
+    min-width: 0;
+}
+
+.badge .emoji {
+    display: block;
+    font-size: 27px;
+    filter: grayscale(1);
+}
+
+.badge.earned {
+    background: #fff3b0;
+    color: #222;
+    border-color: #e2b900;
+}
+
+.badge.earned .emoji { filter: none; }
+
+#bonusButton {
+    background: #e6a400;
+    color: #222;
+    font-size: 20px;
+    margin-top: 9px;
+}
+
+/* GAME SCREENS */
+
+.game-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.game-header h1 {
+    flex: 1;
+    text-align: center;
+    font-size: clamp(24px, 4vw, 34px);
+}
+
+.game-content {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* LETTER GAME */
+
+.letter-slots {
+    display: grid;
+    grid-template-columns: repeat(13, 1fr);
+    gap: 5px;
+    width: min(950px, 98%);
+    margin: 10px auto;
+}
+
+.letter-slot {
+    border: 2px solid #777;
+    border-radius: 6px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    background: #f5f5f5;
+}
+
+.letter-slot.correct {
+    background: #9be7a0;
+    border-color: green;
+}
+
+.letter-bank {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    width: min(950px, 98%);
+    margin: 10px auto;
+}
+
+.letter-tile {
+    background: #4285f4;
+    color: white;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: grab;
+}
+
+/* NUMBER GAME */
+
+#numberQuestion {
+    font-size: 55px;
+    font-weight: bold;
+    margin: 15px;
+}
+
+.answer-buttons button {
+    min-width: 90px;
+    font-size: 30px;
+    background: #34a853;
+}
+
+/* COLOR GAME */
+
+.color-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    max-width: 750px;
+}
+
+.color-choice {
+    width: 105px;
+    height: 85px;
+    border: 3px solid #555;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.color-choice:hover { transform: scale(1.05); }
+
+/* MEMORY GAME */
+
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: min(500px, 90vw);
+    margin: 10px auto;
+}
+
+.memory-tile {
+    height: 95px;
+    background: #4285f4;
+    border-radius: 12px;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.memory-tile.matched,
+.memory-tile.flipped {
+    background: #e4f3ff;
+    color: #222;
+}
+
+/* KEYBOARD GAME */
+
+#keyboardContent { justify-content: center; }
+
+#typingLetter {
+    font-size: 130px;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 10px;
+}
+
+#typingLetter.lowercase { color: black; }
+#typingLetter.uppercase { color: red; }
+
+#typingScore {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+#typingInstructions { font-size: 21px; }
+
+/* MOUSE GAME */
+
+#mouseLegend {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 5px;
+}
+
+#mouseArea {
+    position: relative;
+    width: 90%;
+    max-width: 1000px;
+    height: 55vh;
+    min-height: 250px;
+    max-height: 480px;
+    border: 4px solid #555;
+    border-radius: 15px;
+    background: #f5f5f5;
+    margin: 5px auto;
+    overflow: hidden;
+}
+
+.mouse-circle {
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid rgba(0,0,0,0.15);
+}
+
+#mouseTimeout {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.95);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 10;
+}
+
+/* BONUS GAME */
+
+#bonusArea {
+    width: min(900px, 95%);
+    height: 65vh;
+    min-height: 250px;
+    border: 3px solid #555;
+    border-radius: 15px;
+    position: relative;
+    background: #f5f5f5;
+}
+
+.bonus-number {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #4285f4;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+@media (max-width: 650px) {
+    .game-grid { grid-template-columns: repeat(2, 1fr); }
+    .badge-grid { grid-template-columns: repeat(3, 1fr); }
+    .letter-slots { gap: 2px; }
+    .letter-slot { height: 35px; font-size: 13px; }
+    .letter-tile { padding: 6px 8px; }
+    .memory-tile { height: 70px; }
+    #typingLetter { font-size: 100px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section id="loginScreen" class="screen active">
+    <div id="loginBox">
+        <h1>Computer Class</h1>
+        <h2>Please Log In</h2>
+        <input id="username" placeholder="Username" autocomplete="off"><br>
+        <input id="password" type="password" placeholder="Password"><br>
+        <button onclick="login()">Log In</button>
+        <div id="loginMessage" class="message"></div>
+    </div>
+</section>
+
+<!-- HOME -->
+<section id="homeScreen" class="screen">
+    <h1>Computer Class</h1>
+    <p>Choose a game to play!</p>
+
+    <div class="game-grid">
+        <button class="game-button" id="letterButton" onclick="startLetterGame()">🔤 Letter Game</button>
+        <button class="game-button" id="numberButton" onclick="startNumberGame()">🔢 Number Game</button>
+        <button class="game-button" id="colorButton" onclick="startColorGame()">🎨 Color Game</button>
+        <button class="game-button" id="memoryButton" onclick="startMemoryGame()">🧠 Memory Game</button>
+        <button class="game-button" id="keyboardButton" onclick="startKeyboardGame()">⌨️ Keyboard Game</button>
+        <button class="game-button" id="mouseButton" onclick="startMouseGame()">🖱️ Mouse Game</button>
+    </div>
+
+    <h2 class="badge-heading">🏆 Your Badges 🏆</h2>
+
+    <div class="badge-grid">
+        <div class="badge" id="letterBadge"><span class="emoji">🔤</span>Letter</div>
+        <div class="badge" id="numberBadge"><span class="emoji">🔢</span>Number</div>
+        <div class="badge" id="colorBadge"><span class="emoji">🎨</span>Color</div>
+        <div class="badge" id="memoryBadge"><span class="emoji">🧠</span>Memory</div>
+        <div class="badge" id="keyboardBadge"><span class="emoji">⌨️</span>Keyboard</div>
+        <div class="badge" id="mouseBadge"><span class="emoji">🖱️</span>Mouse</div>
+    </div>
+
+    <button id="bonusButton" style="display:none" onclick="startBonusGame()">🎁 BONUS LEVEL! 🎁</button>
+</section>
+
+<!-- LETTER GAME -->
+<section id="letterScreen" class="screen">
+    <div class="game-header">
+        <button class="home-button" onclick="goHome()">🏠 Home</button>
+        <h1>🔤 Letter Game</h1>
+        <div style="width:90px"></div>
+    </div>
+    <div class="game-content">
+        <h2>Put the letters in ABC order!</h2>
+        <p id="letterProgress">Letters placed: 0 / 26</p>
+        <div class="letter-slots" id="letterSlots"></div>
+        <div class="letter-bank" id="letterBank"></div>
+        <div class="message" id="letterMessage"></div>
+    </div>
+</section>
+
+<!-- NUMBER GAME -->
+<section id="numberScreen" class="screen">
+    <div class="game-header">
+        <button class="home-button" onclick="goHome()">🏠 Home</button>
+        <h1>🔢 Number Game</h1>
+        <div style="width:90px"></div>
+    </div>
+    <div class="game-content">
+        <h2>Solve the math problem!</h2>
+        <p id="numberProgress">Correct answers: 0 / 10</p>
+        <div id="numberQuestion"></div>
+        <div class="answer-buttons" id="answerButtons"></div>
+        <div class="message" id="numberMessage"></div>
+    </div>
+</section>
+
+<!-- COLOR GAME -->
+<section id="colorScreen" class="screen">
+    <div class="game-header">
+        <button class="home-button" onclick="goHome()">🏠 Home</button>
+        <h1>🎨 Color Game</h1>
+        <div style="width:90px"></div>
+    </div>
+    <div class="game-content">
+        <h2>Find this color!</h2>
+        <h2 id="colorQuestion" style="font-size:38px"></h2>
+        <p id="colorProgress">Correct: 0 / 20</p>
+        <div class="color-options" id="colorOptions"></div>
+        <div class="message" id="colorMessage"></div>
+    </div>
+</section>
+
+<!-- MEMORY GAME -->
+<section id="memoryScreen" class="screen">
+    <div class="game-header">
+        <button class="home-button" onclick="goHome()">🏠 Home</button>
+        <h1>🧠 Memory Game</h1>
+        <div style="width:90px"></div>
+    </div>
+    <div class="game-content">
+        <h2 id="memoryLevel">Level 1</h2>
+        <p id="memoryTimer"></p>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <div class="message" id="memoryMessage"></div>
+        <button id="memoryRestart" style="display:none" onclick="startMemoryLevel(5)">🔄 Restart Level 5</button>
+    </div>
+</section>
+
+<!-- KEYBOARD GAME -->
+<section id="keyboardScreen" class="screen">
+    <div class="game-header">
+        <button class="home-button" onclick="goHome()">🏠 Home</button>
+        <h1>⌨️ Keyboard Game</h1>
+        <div style="width:90px"></div>
+    </div>
+    <div class="game-content" id="keyboardContent">
+        <p id="typingInstructions">Type the letter you see using your keyboard!</p>
+        <p>Black = lowercase. Red = uppercase (hold Shift).</p>
+        <div id="typingLetter" class="lowercase">a</div>
+        <div id="typingScore">0 / 50</div>
+        <div class="message" id="typingMessage"></div>
+    </div>
+</section>
+
+<!-- MOUSE GAME -->
+<section id="mouseScreen" class="screen">
+    <div class="game-header">
+        <button class="home-button" onclick="goHome()">🏠 Home</button>
+        <h1>🖱️ Mouse Game</h1>
+        <div style="width:90px"></div>
+    </div>
+    <div class="game-content">
+        <h2 id="mouseLevelText">Level 1</h2>
+        <p id="mouseScore">Score: 0 / 10</p>
+        <p id="mouseTimer"></p>
+        <div id="mouseLegend"></div>
+        <div id="mouseArea">
+            <div id="mouseTimeout">
+                <div>You ran out of time!</div>
+                <button onclick="resetMouseLevel5()">🔄 Reset Level 5</button>
+            </div>
+        </div>
+        <div class="message" id="mouseMessage"></div>
+    </div>
+</section>
+
+<!-- BONUS GAME -->
+<section id="bonusScreen" class="screen">
+    <div class="game-header">
+        <button class="home-button" onclick="goHome()">🏠 Home</button>
+        <h1>🎁 Bonus Level!</h1>
+        <div style="width:90px"></div>
+    </div>
+    <div class="game-content">
+        <h2>Click the numbers from 1 to 20!</h2>
+        <p id="bonusProgress">Find number 1!</p>
+        <p id="bonusTimer">Time: 60</p>
+        <div id="bonusArea"></div>
+        <div class="message" id="bonusMessage"></div>
+        <button id="bonusRestart" style="display:none" onclick="startBonusGame()">🔄 Try Again</button>
+    </div>
+</section>
+
+<script>
+
+/* GENERAL NAVIGATION AND BADGES */
+
+let earnedBadges = [];
+
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+function login() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value;
+
+    if (user === "ksm" && pass === "123456") {
+        showScreen("homeScreen");
+    } else {
+        document.getElementById("loginMessage").textContent =
+            "❌ Incorrect username or password.";
+    }
+}
+
+document.getElementById("username").addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+});
+
+document.getElementById("password").addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+});
+
+function goHome() {
+    stopMouseGame();
+    stopMemoryGame();
+    stopTypingGame();
+    stopBonusGame();
+    showScreen("homeScreen");
+}
+
+function earnBadge(name) {
+    if (!earnedBadges.includes(name)) earnedBadges.push(name);
+
+    document.getElementById(name + "Badge").classList.add("earned");
+    document.getElementById(name + "Button").disabled = true;
+
+    if (earnedBadges.length === 6) {
+        document.getElementById("bonusButton").style.display = "inline-block";
+    }
+}
+
+/* LETTER GAME */
+
+let placedLetters = 0;
+let draggedLetter = "";
+
+function startLetterGame() {
+    showScreen("letterScreen");
+    placedLetters = 0;
+
+    document.getElementById("letterMessage").textContent = "";
+    document.getElementById("letterProgress").textContent = "Letters placed: 0 / 26";
+
+    const slots = document.getElementById("letterSlots");
+    const bank = document.getElementById("letterBank");
+
+    slots.innerHTML = "";
+    bank.innerHTML = "";
+
+    for (let i = 0; i < 26; i++) {
+        const slot = document.createElement("div");
+        slot.className = "letter-slot";
+        slot.textContent = i + 1;
+        slot.dataset.answer = String.fromCharCode(65 + i);
+
+        slot.addEventListener("dragover", e => e.preventDefault());
+
+        slot.addEventListener("drop", e => {
+            e.preventDefault();
+
+            if (slot.dataset.answer === draggedLetter &&
+                !slot.classList.contains("correct")) {
+
+                slot.textContent = draggedLetter;
+                slot.classList.add("correct");
+
+                const tile = document.querySelector(
+                    '[data-letter="' + draggedLetter + '"]'
+                );
+
+                if (tile) tile.remove();
+
+                placedLetters++;
+
+                document.getElementById("letterProgress").textContent =
+                    "Letters placed: " + placedLetters + " / 26";
+
+                document.getElementById("letterMessage").textContent = "🎉 Great job!";
+
+                if (placedLetters === 26) {
+                    document.getElementById("letterMessage").textContent =
+                        "🎉🎉 AMAZING! You put the whole alphabet in order! 🎉🎉";
+                    earnBadge("letter");
+                }
+
+            } else {
+                document.getElementById("letterMessage").textContent =
+                    "❌ Try another letter!";
+            }
+        });
+
+        slots.appendChild(slot);
+    }
+
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    shuffle(letters);
+
+    letters.forEach(letter => {
+        const tile = document.createElement("div");
+        tile.className = "letter-tile";
+        tile.textContent = letter;
+        tile.draggable = true;
+        tile.dataset.letter = letter;
+        tile.addEventListener("dragstart", () => draggedLetter = letter);
+        bank.appendChild(tile);
+    });
+}
+
+/* NUMBER GAME */
+
+let numberCorrect = 0;
+let numberAnswer = 0;
+
+function startNumberGame() {
+    showScreen("numberScreen");
+    numberCorrect = 0;
+    nextNumberQuestion();
+}
+
+function nextNumberQuestion() {
+    document.getElementById("numberMessage").textContent = "";
+
+    document.getElementById("numberProgress").textContent =
+        "Correct answers: " + numberCorrect + " / 10";
+
+    if (numberCorrect >= 10) {
+        document.getElementById("numberQuestion").textContent = "🎉🎉 YOU DID IT! 🎉🎉";
+        document.getElementById("answerButtons").innerHTML = "";
+
+        document.getElementById("numberMessage").textContent =
+            "🏆 AMAZING! You earned the Number Badge! 🏆";
+
+        earnBadge("number");
+        return;
+    }
+
+    let a, b, operation;
+
+    if (Math.random() < 0.7) {
+        a = rand(0,5);
+        b = rand(0,5);
+        operation = "+";
+        numberAnswer = a + b;
+    } else {
+        a = rand(1,6);
+        b = rand(0,a);
+        operation = "-";
+        numberAnswer = a - b;
+    }
+
+    document.getElementById("numberQuestion").textContent =
+        a + " " + operation + " " + b + " = ?";
+
+    let answers = [numberAnswer];
+
+    while (answers.length < 3) {
+        let wrong = Math.max(0, numberAnswer + rand(-3,3));
+        if (!answers.includes(wrong)) answers.push(wrong);
+    }
+
+    shuffle(answers);
+
+    const area = document.getElementById("answerButtons");
+    area.innerHTML = "";
+
+    answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.textContent = answer;
+
+        button.onclick = () => {
+            if (answer === numberAnswer) {
+                numberCorrect++;
+                document.getElementById("numberMessage").textContent = "🎉 Great job!";
+                setTimeout(nextNumberQuestion, 500);
+            } else {
+                document.getElementById("numberMessage").textContent = "❌ Try again!";
+            }
+        };
+
+        area.appendChild(button);
+    });
+}
+
+/* COLOR GAME */
+
+const colors = [
+    {name:"RED", value:"#f44336"},
+    {name:"ORANGE", value:"#ff9800"},
+    {name:"YELLOW", value:"#ffeb3b"},
+    {name:"GREEN", value:"#4caf50"},
+    {name:"BLUE", value:"#2196f3"},
+    {name:"INDIGO", value:"#3f51b5"},
+    {name:"VIOLET", value:"#9c27b0"}
+];
+
+let colorCorrect = 0;
+let colorTarget = null;
+let colorLocked = false;
+
+function startColorGame() {
+    showScreen("colorScreen");
+    colorCorrect = 0;
+    nextColorQuestion();
+}
+
+function nextColorQuestion() {
+    colorLocked = false;
+
+    document.getElementById("colorMessage").textContent = "";
+    document.getElementById("colorProgress").textContent =
+        "Correct: " + colorCorrect + " / 20";
+
+    if (colorCorrect >= 20) {
+        document.getElementById("colorQuestion").textContent =
+            "🎉 YOU BEAT THE COLOR LEVEL! 🎉";
+
+        document.getElementById("colorOptions").innerHTML = "";
+
+        document.getElementById("colorMessage").textContent =
+            "🏆 Amazing job! You earned the Color Badge! 🏆";
+
+        earnBadge("color");
+        return;
+    }
+
+    colorTarget = colors[rand(0, colors.length - 1)];
+    document.getElementById("colorQuestion").textContent = colorTarget.name;
+
+    const options = document.getElementById("colorOptions");
+    options.innerHTML = "";
+
+    shuffle([...colors]).forEach(color => {
+        const choice = document.createElement("button");
+        choice.className = "color-choice";
+        choice.style.background = color.value;
+        choice.setAttribute("aria-label", color.name);
+
+        choice.onclick = () => {
+            if (colorLocked) return;
+            colorLocked = true;
+
+            if (color.name === colorTarget.name) {
+                colorCorrect++;
+                document.getElementById("colorMessage").textContent = "✅ Correct!";
+                setTimeout(nextColorQuestion, 700);
+            } else {
+                document.getElementById("colorMessage").textContent =
+                    "❌ Wrong! Try again.";
+                colorLocked = false;
+            }
+        };
+
+        options.appendChild(choice);
+    });
+}
+
+/* MEMORY GAME - UPDATED TIMER */
+
+const memoryEmojis = [
+    "🐶","🐱","🐸","🦊","🐵","🐰",
+    "🐼","🐨","🦁","🐯","🐷","🐮"
+];
+
+let memoryLevel = 1;
+let memoryCards = [];
+let memoryFlipped = [];
+let memoryMatches = 0;
+let memoryLock = false;
+let memoryClock = null;
+let memoryTime = 120;
+let memoryGameActive = false;
+
+function stopMemoryGame() {
+    memoryGameActive = false;
+
+    if (memoryClock !== null) {
+        clearInterval(memoryClock);
+        memoryClock = null;
+    }
+
+    memoryLock = true;
+}
+
+function startMemoryGame() {
+    stopMemoryGame();
+    showScreen("memoryScreen");
+    memoryLevel = 1;
+    startMemoryLevel(1);
+}
+
+function startMemoryLevel(level) {
+    stopMemoryGame();
+
+    memoryLevel = level;
+    memoryFlipped = [];
+    memoryMatches = 0;
+    memoryLock = false;
+    memoryGameActive = true;
+    memoryTime = 120;
+
+    document.getElementById("memoryRestart").style.display = "none";
+    document.getElementById("memoryLevel").textContent = "Level " + level;
+    document.getElementById("memoryMessage").textContent = "";
+
+    const pairs = 4 + (level - 1);
+
+    memoryCards = memoryEmojis.slice(0, pairs);
+    memoryCards = shuffle([...memoryCards, ...memoryCards]);
+
+    const grid = document.getElementById("memoryGrid");
+    grid.innerHTML = "";
+
+    grid.style.gridTemplateColumns = "repeat(4, 1fr)";
+
+    memoryCards.forEach((emoji, index) => {
+        const tile = document.createElement("div");
+
+        tile.className = "memory-tile";
+        tile.textContent = "?";
+        tile.dataset.emoji = emoji;
+        tile.dataset.index = index;
+
+        tile.onclick = () => flipMemoryTile(tile);
+
+        grid.appendChild(tile);
+    });
+
+    // The timer is used only on Level 5.
+    if (level === 5) {
+        document.getElementById("memoryTimer").textContent =
+            "Time: 120 seconds";
+
+        memoryClock = setInterval(() => {
+            if (!memoryGameActive ||
+                !document.getElementById("memoryScreen").classList.contains("active")) {
+                stopMemoryGame();
+                return;
+            }
+
+            memoryTime--;
+
+            document.getElementById("memoryTimer").textContent =
+                "Time: " + memoryTime + " seconds";
+
+            if (memoryTime <= 0) {
+                stopMemoryGame();
+
+                document.getElementById("memoryTimer").textContent =
+                    "Time is up!";
+
+                document.getElementById("memoryMessage").textContent =
+                    "⏰ TIME'S UP! Try Level 5 again.";
+
+                document.getElementById("memoryRestart").style.display =
+                    "inline-block";
+            }
+        }, 1000);
+
+    } else {
+        document.getElementById("memoryTimer").textContent = "";
+    }
+}
+
+function flipMemoryTile(tile) {
+    if (!memoryGameActive ||
+        memoryLock ||
+        tile.classList.contains("flipped") ||
+        tile.classList.contains("matched")) {
+        return;
+    }
+
+    tile.textContent = tile.dataset.emoji;
+    tile.classList.add("flipped");
+
+    memoryFlipped.push(tile);
+
+    if (memoryFlipped.length === 2) {
+        memoryLock = true;
+
+        const [a,b] = memoryFlipped;
+
+        if (a.dataset.emoji === b.dataset.emoji) {
+            a.classList.add("matched");
+            b.classList.add("matched");
+
+            memoryMatches++;
+            memoryFlipped = [];
+            memoryLock = false;
+
+            if (memoryMatches === memoryCards.length / 2) {
+                if (memoryLevel < 5) {
+                    document.getElementById("memoryMessage").textContent =
+                        "🎉 Level " + memoryLevel + " complete!";
+
+                    const completedLevel = memoryLevel;
+
+                    setTimeout(() => {
+                        if (memoryGameActive &&
+                            memoryLevel === completedLevel) {
+                            startMemoryLevel(completedLevel + 1);
+                        }
+                    }, 1800);
+
+                } else {
+                    stopMemoryGame();
+
+                    document.getElementById("memoryTimer").textContent =
+                        "Level Complete!";
+
+                    document.getElementById("memoryMessage").textContent =
+                        "🏆 AMAZING! You completed all 5 levels!";
+
+                    earnBadge("memory");
+                }
+            }
+
+        } else {
+            setTimeout(() => {
+                if (!memoryGameActive) return;
+
+                a.textContent = "?";
+                b.textContent = "?";
+
+                a.classList.remove("flipped");
+                b.classList.remove("flipped");
+
+                memoryFlipped = [];
+                memoryLock = false;
+            }, 850);
+        }
+    }
+}
+
+/* KEYBOARD GAME */
+
+let typingScore = 0;
+let typingTarget = "";
+let typingActive = false;
+
+function stopTypingGame() {
+    typingActive = false;
+    document.removeEventListener("keydown", handleTypingKey);
+}
+
+function startKeyboardGame() {
+    showScreen("keyboardScreen");
+
+    typingScore = 0;
+    typingActive = true;
+
+    document.getElementById("typingMessage").textContent = "";
+    document.getElementById("typingScore").textContent = "0 / 50";
+
+    document.removeEventListener("keydown", handleTypingKey);
+    document.addEventListener("keydown", handleTypingKey);
+
+    nextTypingLetter();
+}
+
+function nextTypingLetter() {
+    const alphabet = "abcdefghijklmnopqrstuvwxyz";
+    const letter = alphabet[rand(0,25)];
+
+    const uppercase = Math.random() < 0.5;
+    typingTarget = uppercase ? letter.toUpperCase() : letter;
+
+    const display = document.getElementById("typingLetter");
+
+    display.textContent = typingTarget;
+    display.className = uppercase ? "uppercase" : "lowercase";
+
+    document.getElementById("typingScore").textContent =
+        typingScore + " / 50";
+}
+
+function handleTypingKey(event) {
+    if (!typingActive ||
+        !document.getElementById("keyboardScreen").classList.contains("active")) {
+        return;
+    }
+
+    if (event.key === "Shift" ||
+        event.key === "Control" ||
+        event.key === "Alt" ||
+        event.key === "Meta") {
+        return;
+    }
+
+    if (event.key.length !== 1 || !/[a-zA-Z]/.test(event.key)) return;
+
+    event.preventDefault();
+
+    const typedLetter = event.key;
+    const isUppercase = typedLetter === typedLetter.toUpperCase();
+    const targetIsUppercase = typingTarget === typingTarget.toUpperCase();
+
+    if (typedLetter === typingTarget &&
+        isUppercase === targetIsUppercase) {
+
+        typingScore++;
+
+        document.getElementById("typingMessage").textContent = "✅ Correct!";
+        document.getElementById("typingScore").textContent =
+            typingScore + " / 50";
+
+        if (typingScore >= 50) {
+            typingActive = false;
+            document.removeEventListener("keydown", handleTypingKey);
+
+            document.getElementById("typingLetter").textContent = "🎉";
+
+            document.getElementById("typingMessage").textContent =
+                "🏆 AMAZING! You completed the Keyboard Game! 🏆";
+
+            earnBadge("keyboard");
+
+        } else {
+            nextTypingLetter();
+        }
+
+    } else {
+        document.getElementById("typingMessage").textContent =
+            "❌ Try again! Check the letter and whether you need Shift.";
+    }
+}
+
+/* MOUSE GAME - UPDATED RANDOM CIRCLES */
+
+let mouseLevel = 1;
+let mouseScore = 0;
+let mouseTimer = 60;
+let mouseClock = null;
+let mouseFinished = false;
+let mouseCircleTimers = [];
+let mouseSpawnTimers = [];
+
+const mouseGoals = [10,15,20,25,100];
+
+// How long circles stay visible on Levels 4 and 5.
+const mouseDisappearTimes = {
+    4: 1300,
+    5: 1000
+};
+
+function clearMouseTimers() {
+    mouseCircleTimers.forEach(timer => clearTimeout(timer));
+    mouseSpawnTimers.forEach(timer => clearTimeout(timer));
+
+    mouseCircleTimers = [];
+    mouseSpawnTimers = [];
+
+    if (mouseClock !== null) {
+        clearInterval(mouseClock);
+        mouseClock = null;
+    }
+}
+
+function stopMouseGame() {
+    clearMouseTimers();
+
+    mouseFinished = true;
+
+    const area = document.getElementById("mouseArea");
+
+    if (area) {
+        area.querySelectorAll(".mouse-circle").forEach(circle => circle.remove());
+    }
+}
+
+function startMouseGame() {
+    stopMouseGame();
+
+    showScreen("mouseScreen");
+
+    mouseLevel = 1;
+    startMouseLevel();
+}
+
+function startMouseLevel() {
+    clearMouseTimers();
+
+    mouseFinished = false;
+    mouseScore = 0;
+
+    const area = document.getElementById("mouseArea");
+
+    area.querySelectorAll(".mouse-circle").forEach(circle => circle.remove());
+
+    document.getElementById("mouseTimeout").style.display = "none";
+
+    document.getElementById("mouseMessage").textContent = "";
+    document.getElementById("mouseLevelText").textContent =
+        "Level " + mouseLevel;
+
+    document.getElementById("mouseScore").textContent =
+        "Score: 0 / " + mouseGoals[mouseLevel - 1];
+
+    document.getElementById("mouseLegend").textContent =
+        mouseLevel === 5
+        ? "🔴 1 Point   🔵 3 Points   🟣 5 Points   🟡 10 Points"
+        : "";
+
+    if (mouseLevel === 5) {
+        mouseTimer = 60;
+
+        document.getElementById("mouseTimer").textContent =
+            "Time: 60 seconds";
+
+        mouseClock = setInterval(() => {
+            if (mouseFinished ||
+                !document.getElementById("mouseScreen").classList.contains("active")) {
+                return;
+            }
+
+            mouseTimer--;
+
+            document.getElementById("mouseTimer").textContent =
+                "Time: " + mouseTimer + " seconds";
+
+            if (mouseTimer <= 0) {
+                mouseFinished = true;
+                clearMouseTimers();
+
+                area.querySelectorAll(".mouse-circle").forEach(circle => circle.remove());
+
+                document.getElementById("mouseTimeout").style.display = "flex";
+                document.getElementById("mouseMessage").textContent = "";
+            }
+        }, 1000);
+
+    } else {
+        document.getElementById("mouseTimer").textContent = "";
+    }
+
+    // Levels 1-4 use one red circle.
+    if (mouseLevel <= 4) {
+        spawnMouseCircle(1, 90, "red");
+    }
+
+    // Level 5 uses four different circles with different point values.
+    if (mouseLevel === 5) {
+        spawnMouseCircle(1, 90, "red");
+        spawnMouseCircle(3, 72, "blue");
+        spawnMouseCircle(5, 58, "purple");
+        spawnMouseCircle(10, 45, "yellow");
+    }
+}
+
+// Creates a circle in a random location.
+function spawnMouseCircle(points, size, color) {
+    if (mouseFinished) return;
+
+    const area = document.getElementById("mouseArea");
+
+    const circle = document.createElement("div");
+
+    circle.className = "mouse-circle";
+    circle.style.width = size + "px";
+    circle.style.height = size + "px";
+    circle.style.background = color;
+
+    const maxX = Math.max(0, area.clientWidth - size);
+    const maxY = Math.max(0, area.clientHeight - size);
+
+    circle.style.left = rand(0, maxX) + "px";
+    circle.style.top = rand(0, maxY) + "px";
+
+    let disappearTimer = null;
+
+    // On Levels 4 and 5, the circle disappears if it is not clicked quickly.
+    if (mouseLevel >= 4) {
+        disappearTimer = setTimeout(() => {
+            if (circle.parentElement) {
+                circle.remove();
+
+                // Replace the missed circle after a short pause.
+                scheduleMouseCircle(points, size, color, 300);
+            }
+        }, mouseDisappearTimes[mouseLevel]);
+
+        mouseCircleTimers.push(disappearTimer);
+    }
+
+    circle.onclick = () => {
+        if (mouseFinished || !circle.parentElement) return;
+
+        // Stop the disappearance timer if the student clicks in time.
+        if (disappearTimer !== null) {
+            clearTimeout(disappearTimer);
+        }
+
+        circle.remove();
+
+        mouseScore += points;
+
+        document.getElementById("mouseScore").textContent =
+            "Score: " + mouseScore + " / " + mouseGoals[mouseLevel - 1];
+
+        if (mouseScore >= mouseGoals[mouseLevel - 1]) {
+            finishMouseLevel();
+            return;
+        }
+
+        // Create another circle at a new random location.
+        scheduleMouseCircle(points, size, color, 250);
+    };
+
+    area.appendChild(circle);
+}
+
+// Adds a small delay before the next circle appears.
+function scheduleMouseCircle(points, size, color, delay) {
+    if (mouseFinished) return;
+
+    const timer = setTimeout(() => {
+        if (!mouseFinished) {
+            spawnMouseCircle(points, size, color);
+        }
+    }, delay);
+
+    mouseSpawnTimers.push(timer);
+}
+
+function finishMouseLevel() {
+    if (mouseFinished) return;
+
+    mouseFinished = true;
+    clearMouseTimers();
+
+    const area = document.getElementById("mouseArea");
+    area.querySelectorAll(".mouse-circle").forEach(circle => circle.remove());
+
+    if (mouseLevel < 5) {
+        document.getElementById("mouseMessage").textContent =
+            "🎉 You completed Level " + mouseLevel + "!";
+
+        const completedLevel = mouseLevel;
+
+        setTimeout(() => {
+            if (mouseLevel === completedLevel &&
+                document.getElementById("mouseScreen").classList.contains("active")) {
+                mouseLevel++;
+                startMouseLevel();
+            }
+        }, 1000);
+
+    } else {
+        document.getElementById("mouseMessage").textContent =
+            "🎉 You completed all 5 Mouse Levels! 🎉 🏆 AMAZING! 🏆";
+
+        earnBadge("mouse");
+    }
+}
+
+function resetMouseLevel5() {
+    clearMouseTimers();
+
+    mouseLevel = 5;
+
+    document.getElementById("mouseTimeout").style.display = "none";
+
+    startMouseLevel();
+}
+
+/* BONUS GAME */
+
+let bonusNext = 1;
+let bonusClock = null;
+let bonusTime = 60;
+
+function stopBonusGame() {
+    clearInterval(bonusClock);
+    bonusClock = null;
+}
+
+function startBonusGame() {
+    showScreen("bonusScreen");
+    stopBonusGame();
+
+    bonusNext = 1;
+    bonusTime = 60;
+
+    document.getElementById("bonusMessage").textContent = "";
+    document.getElementById("bonusRestart").style.display = "none";
+    document.getElementById("bonusProgress").textContent = "Find number 1!";
+    document.getElementById("bonusTimer").textContent = "Time: 60";
+
+    const area = document.getElementById("bonusArea");
+    area.innerHTML = "";
+
+    const numbers = Array.from({length:20}, (_,i) => i + 1);
+    shuffle(numbers);
+
+    numbers.forEach(number => {
+        const item = document.createElement("div");
+
+        item.className = "bonus-number";
+        item.textContent = number;
+
+        const maxX = Math.max(0, area.clientWidth - 50);
+        const maxY = Math.max(0, area.clientHeight - 50);
+
+        item.style.left = rand(0, maxX) + "px";
+        item.style.top = rand(0, maxY) + "px";
+
+        item.onclick = () => {
+            if (number === bonusNext) {
+                item.remove();
+                bonusNext++;
+
+                if (bonusNext > 20) {
+                    stopBonusGame();
+
+                    document.getElementById("bonusProgress").textContent = "20 / 20";
+
+                    document.getElementById("bonusMessage").textContent =
+                        "🎉🎉 AMAZING! YOU BEAT THE BONUS LEVEL! 🎉🎉 🏆 COMPUTER CHAMPION! 🏆";
+
+                } else {
+                    document.getElementById("bonusProgress").textContent =
+                        "Find number " + bonusNext + "!";
+                }
+
+            } else {
+                document.getElementById("bonusMessage").textContent =
+                    "❌ Find " + bonusNext + " first!";
+            }
+        };
+
+        area.appendChild(item);
+    });
+
+    bonusClock = setInterval(() => {
+        bonusTime--;
+
+        document.getElementById("bonusTimer").textContent =
+            "Time: " + bonusTime;
+
+        if (bonusTime <= 0) {
+            stopBonusGame();
+
+            area.innerHTML = "";
+
+            document.getElementById("bonusMessage").textContent =
+                "⏰ TIME'S UP! Try the Bonus Level again!";
+
+            document.getElementById("bonusRestart").style.display =
+                "inline-block";
+        }
+    }, 1000);
+}
+
+/* HELPER FUNCTIONS */
+
+function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array;
+}
+
+</script>
+
+</body>
+</html>
+```
